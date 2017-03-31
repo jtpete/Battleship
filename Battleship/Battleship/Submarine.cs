@@ -175,6 +175,31 @@ namespace Battleship
         {
             return location;
         }
+        public void SetLocation(int x1, int y1, int x2, int y2)
+        {
+            if (x1 == x2)
+            {
+                location[0, 0] = x1;
+                location[0, 1] = y1;
+                location[1, 0] = x1;
+                location[1, 1] = y1 + 1;
+                location[2, 0] = x1;
+                location[2, 1] = y2;
+
+            }
+            else
+            {
+                location[0, 0] = x1;
+                location[0, 1] = y1;
+                location[1, 0] = x1 + 1;
+                location[1, 1] = y1;
+                location[2, 0] = x2;
+                location[2, 1] = y2;
+
+            }
+
+            locationSet = true;
+        }
 
     }
 }

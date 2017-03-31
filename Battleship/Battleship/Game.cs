@@ -12,6 +12,7 @@ namespace Battleship
         Player player2 = new Player("Player2");
         bool quitGame = false;
         bool gameSetupComplete = false;
+        bool gameWon = false;
         private DateTime startTime;
         private DateTime endTime;
 
@@ -26,7 +27,25 @@ namespace Battleship
         }
         public void PlayGame()
         {
-            //Main Menu
+            startTime = DateTime.Now;
+            player1.SetTurn(true);
+            while (!quitGame && !gameWon)
+            {
+                if (player1.IsTurn())
+                {
+                    Console.Clear();
+                    PlayMenu(player1, player2);
+                    PlayMenuResponse(player1, player2);
+                }
+                else
+                {
+                    Console.Clear();
+                    PlayMenu(player2, player1);
+                    PlayMenuResponse(player2, player1);
+                }
+                player1.ChangeTurn();
+                player2.ChangeTurn();
+            }
         }
         public void ConcludedGame()
         {
@@ -74,9 +93,46 @@ namespace Battleship
                     break;      
             }
         }
-        private void PlayMenu()
+        private void PlayMenu(Player currentPlayer, Player opponent)
         {
-            //start menu 
+            Console.WriteLine($"{currentPlayer.GetName()}'s Turn.");
+            Console.WriteLine("----------------------------");
+            Console.WriteLine($"1.  Pick a point to shoot at.");
+            Console.WriteLine($"2.  Look at {currentPlayer.GetName()}'s Gameboard.");
+            Console.WriteLine($"3.  Look at {opponent.GetName()} Gameboard.");
+            Console.WriteLine($"4.  Quit");
+        }
+
+        private void PlayMenuResponse(Player currentPlayer, Player opponent)
+        {
+            string response = Console.ReadLine();
+            switch (response)
+            {
+                case "1":
+                    // Pick a point
+                    // Toggle player
+                    break;
+                case "2":
+                    Console.Clear();
+                    currentPlayer.myGameBoard.PrintGameBoard(currentPlayer);
+                    PlayMenu(currentPlayer, opponent);
+                    PlayMenuResponse(currentPlayer, opponent);
+                    break;
+                case "3":
+                    Console.Clear();
+                    opponent.myGameBoard.PrintGameBoard(opponent, true);
+                    PlayMenu(currentPlayer, opponent);
+                    PlayMenuResponse(currentPlayer, opponent);
+                    break;
+                case "4":
+                    quitGame = true;
+                    break;
+                default:
+                    Console.Clear();
+                    PlayMenu(currentPlayer, opponent);
+                    PlayMenuResponse(currentPlayer, opponent);
+                    break;
+            }
         }
         public bool QuitGame()
         {

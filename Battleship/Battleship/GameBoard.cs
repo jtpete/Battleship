@@ -90,6 +90,42 @@ namespace Battleship
                 }
             }
         }
+        public void PrintGameBoard(Player player, bool opponentBoard)
+        {
+
+            Console.Clear();
+            string boat = "\u2588  ";
+            for (int y = board.GetLength(0) - 1; y >= 0; y--)
+            {
+                for (int x = 0; x < board.GetLength(0); x++)
+                {
+                    if (!opponentBoard && myDestroyer.ShipOnLocation(x, y) && x != 0 && y != 0)
+                    {
+                        Console.Write(boat);
+                    }
+                    else if (!opponentBoard && mySubmarine.ShipOnLocation(x, y) && x != 0 && y != 0)
+                    {
+                        Console.Write(boat);
+                    }
+                    else if (!opponentBoard && myBattleship.ShipOnLocation(x, y) && x != 0 && y != 0)
+                    {
+                        Console.Write(boat);
+                    }
+                    else if (!opponentBoard && myAircraftCarrier.ShipOnLocation(x, y) && x != 0 && y != 0)
+                    {
+                        Console.Write(boat);
+                    }
+                    else
+                    {
+                        Console.Write(board[x, y]);
+                    }
+                    if (x + 1 == board.GetLength(0))
+                    {
+                        Console.WriteLine();
+                    }
+                }
+            }
+        }
         public void PutShipsOnBoard(Player player)
         {
             PrintGameBoard(player);
@@ -116,6 +152,31 @@ namespace Battleship
                     gameBoardReady = false;
                     myAircraftCarrier.PlaceShip(myDestroyer, mySubmarine, myBattleship);
                     PutShipsOnBoard(player);
+                    break;
+                case "9":
+                    gameBoardReady = false;
+                    string res = Console.ReadLine();
+                        switch(res)
+                        {
+                        case "1":
+                            myAircraftCarrier.SetLocation(3, 3, 3, 7);
+                            myBattleship.SetLocation(10, 10, 13, 10);
+                            mySubmarine.SetLocation(16,16,16,18);
+                            myDestroyer.SetLocation(3, 15, 3, 16);
+                            break;
+                        case "2":
+                            myAircraftCarrier.SetLocation(10, 10, 14, 10);
+                            myBattleship.SetLocation(3, 3, 3, 6);
+                            mySubmarine.SetLocation(16, 16, 18, 16);
+                            myDestroyer.SetLocation(18, 2, 18, 3);
+                            break;
+                        case "3":
+                            myAircraftCarrier.SetLocation(18, 7, 18, 11);
+                            myBattleship.SetLocation(3, 3, 6, 3);
+                            mySubmarine.SetLocation(10, 10, 10, 12);
+                            myDestroyer.SetLocation(4, 17, 4, 18);
+                            break;
+                    }
                     break;
                 case "5":
                     break;

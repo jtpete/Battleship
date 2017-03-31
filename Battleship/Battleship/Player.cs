@@ -54,7 +54,9 @@ namespace Battleship
                 turn = true;
             }
         }
-
-
+        public void SetTurn(bool turn)
+        {
+            this.turn = turn;
+        }
     }
 }
