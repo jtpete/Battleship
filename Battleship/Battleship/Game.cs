@@ -46,11 +46,19 @@ namespace Battleship
                 player1.ChangeTurn();
                 player2.ChangeTurn();
             }
+            player1.ChangeTurn();
+            player2.ChangeTurn();
         }
         public void ConcludedGame()
         {
-            //Display Results - winner and time length of game
-            Console.WriteLine("\nGame Done!\n");
+            if (player1.IsTurn())
+            {
+                Console.WriteLine($"{player1.GetName()} WINS!");
+            }
+            else
+            {
+                Console.WriteLine($"{player2.GetName()} WINS!");
+            }
         }
         private void StartMenu()
         {
@@ -109,8 +117,16 @@ namespace Battleship
             switch (response)
             {
                 case "1":
-                    // Pick a point
-                    // Toggle player
+                    Console.WriteLine($"{currentPlayer.myGameBoard.FireShot(opponent.GetGameBoard())}");
+                    if (currentPlayer.myGameBoard.DidWin(opponent.GetGameBoard()))
+                    {
+                        gameWon = true;
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Hit Enter for {opponent.GetName()}'s turn. ");
+                    }
+                    Console.ReadLine();
                     break;
                 case "2":
                     Console.Clear();
@@ -126,6 +142,13 @@ namespace Battleship
                     break;
                 case "4":
                     quitGame = true;
+                    break;
+                case "9":
+                    currentPlayer.myGameBoard.NuclearOption(opponent.GetGameBoard());
+                    Console.Clear();
+                    opponent.myGameBoard.PrintGameBoard(opponent, true);
+                    PlayMenu(currentPlayer, opponent);
+                    PlayMenuResponse(currentPlayer, opponent);
                     break;
                 default:
                     Console.Clear();

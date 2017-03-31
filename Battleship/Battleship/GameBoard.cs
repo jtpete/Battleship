@@ -63,7 +63,11 @@ namespace Battleship
             {
                 for (int x = 0; x < board.GetLength(0); x++)
                 {
-                    if(myDestroyer.ShipOnLocation(x,y) && x != 0 && y != 0)
+                    if (board[x, y] == "X  ")
+                    {
+                        Console.Write(board[x, y]);
+                    }
+                    else if (myDestroyer.ShipOnLocation(x,y) && x != 0 && y != 0)
                     {
                         Console.Write(boat);
                     }
@@ -99,7 +103,11 @@ namespace Battleship
             {
                 for (int x = 0; x < board.GetLength(0); x++)
                 {
-                    if (!opponentBoard && myDestroyer.ShipOnLocation(x, y) && x != 0 && y != 0)
+                    if (board[x, y] == "X  ")
+                    {
+                        Console.Write(board[x, y]);
+                    }
+                    else if (!opponentBoard && myDestroyer.ShipOnLocation(x, y) && x != 0 && y != 0)
                     {
                         Console.Write(boat);
                     }
@@ -126,6 +134,134 @@ namespace Battleship
                 }
             }
         }
+
+        private int[,] GetShotCoordinates()
+        {
+            int[,] shot = new int[1,2];
+            Console.WriteLine($"Where would you like to shoot?");
+            Console.WriteLine($"Pleae give the x coordinate:");
+            string x1 = Console.ReadLine();
+            Console.WriteLine($"Pleae give the y coordinate:");
+            string y1 = Console.ReadLine();
+            if(CoordinateIsInteger(x1) && CoordinateIsInteger(y1))
+            {
+                int x = Convert.ToInt16(x1);
+                int y = Convert.ToInt16(y1);
+                shot[0, 0] = x;
+                shot[0, 1] = y;
+            }
+            else
+            {
+                Console.WriteLine("Sorry, doesn't seem to be a valid shot.  Please try again.");
+                shot = GetShotCoordinates();
+            }
+            return shot;
+        }
+
+        private bool IsHit(int[,] shot, GameBoard oppGameBoard)
+        {
+            if (oppGameBoard.myDestroyer.ShipHit(shot) ||
+                oppGameBoard.mySubmarine.ShipHit(shot) ||
+                oppGameBoard.myBattleship.ShipHit(shot) ||
+                oppGameBoard.myAircraftCarrier.ShipHit(shot))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private string WhatWasSunk(int[,] shot, GameBoard oppGameBoard)
+        {
+            string ship = "Destroyer";
+            if (oppGameBoard.myDestroyer.ShipHit(shot))
+            {
+                ship = "Destroyer";
+            }
+            else if(oppGameBoard.mySubmarine.ShipHit(shot))
+            {
+                ship = "Submarine";
+            }
+            else if (oppGameBoard.myBattleship.ShipHit(shot))
+            {
+                ship = "Battleship";
+            }
+            else if(oppGameBoard.myAircraftCarrier.ShipHit(shot))
+            {
+                ship = "Aircraft Carrier";
+            }
+            return ship;
+        }
+        private bool ApplyHit(int[,] shot, GameBoard oppGameBoard)
+        {
+            bool didSink = false;
+            if (oppGameBoard.myDestroyer.ShipHit(shot))
+            {
+                didSink = oppGameBoard.myDestroyer.SetHit(shot);
+            }
+            else if (oppGameBoard.mySubmarine.ShipHit(shot))
+            {
+                didSink = oppGameBoard.mySubmarine.SetHit(shot);
+            }
+            else if (oppGameBoard.myBattleship.ShipHit(shot))
+            {
+                didSink = oppGameBoard.myBattleship.SetHit(shot);
+            }
+            else if (oppGameBoard.myAircraftCarrier.ShipHit(shot))
+            {
+                didSink = oppGameBoard.myAircraftCarrier.SetHit(shot);
+            }
+            return didSink;
+
+        }
+
+
+        public string FireShot(GameBoard oppGameBoard )
+        {
+            bool didSink = false;
+            int[,] shot = new int[1, 1];
+            string shotResponse = "\n|----------MISS-----------|\n";
+            shot = GetShotCoordinates();
+            oppGameBoard.board[shot[0, 0], shot[0, 1]] = "O  ";
+            if (IsHit(shot, oppGameBoard))
+            {
+                shotResponse = "\nCongratulations - HIT!!!\n";
+                oppGameBoard.board[shot[0, 0], shot[0, 1]] = "X  ";
+                didSink = ApplyHit(shot, oppGameBoard);
+                if (didSink)
+                {
+                    shotResponse = "\nYou sunk the: " + WhatWasSunk(shot, oppGameBoard);
+                    if(DidWin(oppGameBoard))
+                    {
+                        shotResponse = "\nWinner, Winner, Chicken Dinner!!\n";
+                    }
+                }
+            }
+            return shotResponse;
+        }
+        public bool DidWin(GameBoard oppGameBoard)
+        {
+            if(oppGameBoard.myDestroyer.GetSunk() &&
+                oppGameBoard.mySubmarine.GetSunk() &&
+                oppGameBoard.myBattleship.GetSunk() &&
+                oppGameBoard.myAircraftCarrier.GetSunk())
+            {
+                return true;
+            }
+            return false;
+        }
+        private bool CoordinateIsInteger(string coordinate)
+        {        {
+            try
+            {
+                int x = Convert.ToInt16(coordinate);
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
+        }
+    }
         public void PutShipsOnBoard(Player player)
         {
             PrintGameBoard(player);
@@ -224,6 +360,62 @@ namespace Battleship
         public bool IsGameBoardReady()
         {
             return gameBoardReady;
+        }
+        public void NuclearOption(GameBoard opponent)
+        {
+            int[,] subLoc = opponent.mySubmarine.GetLocation();
+            int[,] batLoc = opponent.myBattleship.GetLocation();
+            int[,] airLoc = opponent.myAircraftCarrier.GetLocation();
+            int[,] desLoc = opponent.myDestroyer.GetLocation();
+            UpdateOpponentBoard(opponent, desLoc, subLoc, batLoc, airLoc);
+
+            opponent.myAircraftCarrier.SetAsSunk();
+            opponent.myBattleship.SetAsSunk();
+            opponent.mySubmarine.SetAsSunk();
+
+            opponent.myAircraftCarrier.NuclearHits();
+            opponent.myBattleship.NuclearHits();
+            opponent.mySubmarine.NuclearHits();
+            opponent.myDestroyer.NuclearHits();
+
+        }
+
+        private void UpdateOpponentBoard(GameBoard opponent, int[,] desLoc, int[,] subLoc, int[,] batLoc, int[,] airLoc)
+        {
+            for(int x = 0; x < subLoc.GetLength(0); x++)
+            {
+                opponent.board[subLoc[x, 0], subLoc[x, 1]] = "X  ";
+                
+            }
+            for (int x = 0; x < batLoc.GetLength(0); x++)
+            {
+                opponent.board[batLoc[x, 0], batLoc[x, 1]] = "X  ";
+
+            }
+            for (int x = 0; x < airLoc.GetLength(0); x++)
+            {
+                opponent.board[airLoc[x, 0], airLoc[x, 1]] = "X  ";
+            }
+            opponent.board[desLoc[0, 0], desLoc[0, 1]] = "X  ";
+        }
+
+        private void UpdateOpponentShipHit(GameBoard opponent, int[,] desLoc, int[,] subLoc, int[,] batLoc, int[,] airLoc)
+        {
+            for (int x = 0; x < subLoc.GetLength(0); x++)
+            {
+                opponent.board[subLoc[x, 0], subLoc[x, 1]] = "X  ";
+
+            }
+            for (int x = 0; x < batLoc.GetLength(0); x++)
+            {
+                opponent.board[batLoc[x, 0], batLoc[x, 1]] = "X  ";
+
+            }
+            for (int x = 0; x < airLoc.GetLength(0); x++)
+            {
+                opponent.board[airLoc[x, 0], airLoc[x, 1]] = "X  ";
+            }
+            opponent.board[desLoc[0, 0], desLoc[0, 1]] = "X  ";
         }
 
     }

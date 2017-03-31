@@ -9,10 +9,60 @@ namespace Battleship
     public class Submarine : Ship
     {
         public int[,] location = new int[3, 2];
+        public bool[] hits = new bool[3];
         public Submarine()
         {
             name = "Submarine";
             size = 3;
+            for (int x = 0; x < hits.Length; x++)
+            {
+                hits[x] = false;
+            }
+        }
+        public bool SetHit(int[,] shot)
+        {
+            bool didSink = false;
+            for (int x = 0; x < hits.GetLength(0); x++)
+            {
+                if (location[x, 0] == shot[0, 0] &&
+                    location[x, 1] == shot[0, 1])
+                {
+                    hits[x] = true;
+                    didSink = CheckSunk();
+                }
+            }
+            return didSink;
+
+        }
+        public bool CheckSunk()
+        {
+            bool allHits = true;
+            for (int x = 0; x < hits.Length; x++)
+            {
+                if (!hits[x])
+                {
+                    allHits = false;
+                }
+            }
+            if (allHits)
+            {
+                sunk = true;
+                return sunk;
+            }
+            return sunk;
+        }
+
+        public bool ShipHit(int[,] shot)
+        {
+            for (int x = 0; x < hits.GetLength(0); x++)
+            {
+                if (location[x, 0] == shot[0, 0] &&
+                    location[x, 1] == shot[0, 1])
+                {
+                    return true;
+                }
+            }
+            return false;
         }
         public void PlaceShip(Destroyer destroyer, Battleship battleship, AircraftCarrier aircraftCarrier)
         {
@@ -199,6 +249,13 @@ namespace Battleship
             }
 
             locationSet = true;
+        }
+        public void NuclearHits()
+        {
+            for (int x = 0; x < hits.Length; x++)
+            {
+                hits[x] = true;
+            }
         }
 
     }

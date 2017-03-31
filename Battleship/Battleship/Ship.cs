@@ -102,6 +102,14 @@ namespace Battleship
             }
             return location;
         }
+        public bool GetSunk()
+        {
+            return sunk;
+        }
+        public void SetAsSunk()
+        {
+            sunk = true;
+        }
 
     }
 }

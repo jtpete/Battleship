@@ -58,5 +58,9 @@ namespace Battleship
         {
             this.turn = turn;
         }
+        public GameBoard GetGameBoard()
+        {
+            return myGameBoard;
+        }
     }
 }
