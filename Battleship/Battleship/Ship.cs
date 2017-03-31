@@ -91,6 +91,17 @@ namespace Battleship
         {
             return locationSet;
         }
+        public int[,] ClearLocation(int[,] location)
+        {
+            for (int x = 0; x < location.GetLength(0); x++)
+            {
+                for(int y = 0; y < location.GetLength(1); y++)
+                {
+                    location[x, y] = 0;
+                }
+            }
+            return location;
+        }
 
     }
 }

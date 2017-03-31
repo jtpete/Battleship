@@ -56,16 +56,15 @@ namespace Battleship
                     break;
                 case "2":
                     player1.myGameBoard.PutShipsOnBoard(player1);
-                    Console.ReadLine();
                     break;
                 case "3":
                     player2.GetNameFromPlayer();
                     break;
                 case "4":
-                    //set gameboard for player2
+                    player2.myGameBoard.PutShipsOnBoard(player2);
                     break;
                 case "5":
-                    //verify boards are set
+                    VerifyBoards();
                     break;
                 case "6":
                     quitGame = true;
@@ -82,6 +81,28 @@ namespace Battleship
         public bool QuitGame()
         {
             return quitGame;
+        }
+        private void VerifyBoards()
+        {
+            string messageP1 = player1.myGameBoard.VerifyGameBoardReady();
+            Console.WriteLine($"\n{player1.GetName()} - {messageP1}");
+            string messageP2 = player2.myGameBoard.VerifyGameBoardReady();
+            Console.WriteLine($"\n{player2.GetName()} - {messageP2}");
+            if (player1.myGameBoard.IsGameBoardReady() && player2.myGameBoard.IsGameBoardReady())
+            {
+                Console.WriteLine("Ready to begin and shoot something? yes or no" );
+                if(Console.ReadLine().ToLower() == "yes")
+                {
+                    gameSetupComplete = true;
+                }
+
+            }
+            else
+            {
+                Console.WriteLine("Let's get all ships in the water first. \n\nHit ENTER to continue.");
+                Console.ReadLine();
+            }
+
         }
     }   
 }

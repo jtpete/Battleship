@@ -12,7 +12,7 @@ namespace Battleship
         Submarine mySubmarine = new Submarine();
         Battleship myBattleship = new Battleship();
         AircraftCarrier myAircraftCarrier = new AircraftCarrier();
-        public bool gameBoardSet = false;
+        bool gameBoardReady = false;
         string[,] board = new string[21, 21];
         public GameBoard()
         {
@@ -98,18 +98,22 @@ namespace Battleship
             switch(response)
             {
                 case "1":
+                    gameBoardReady = false;
                     myDestroyer.PlaceShip(mySubmarine, myBattleship, myAircraftCarrier);
                     PutShipsOnBoard(player);
                     break;
                 case "2":
+                    gameBoardReady = false;
                     mySubmarine.PlaceShip(myDestroyer, myBattleship, myAircraftCarrier);
                     PutShipsOnBoard(player);
                     break;
                 case "3":
+                    gameBoardReady = false;
                     myBattleship.PlaceShip(myDestroyer, mySubmarine, myAircraftCarrier);
                     PutShipsOnBoard(player);
                     break;
                 case "4":
+                    gameBoardReady = false;
                     myAircraftCarrier.PlaceShip(myDestroyer, mySubmarine, myBattleship);
                     PutShipsOnBoard(player);
                     break;
@@ -118,9 +122,6 @@ namespace Battleship
                 default:
                     PutShipsOnBoard(player);
                     break;
-
-
-
             }
         }
         public void ShipPlacementMenu()
@@ -132,6 +133,36 @@ namespace Battleship
             Console.WriteLine($"3.  Battleship");
             Console.WriteLine($"4.  Aircraft Carrier");
             Console.WriteLine($"5.  Done");
+        }
+        public string VerifyGameBoardReady()
+        {
+            string boardReadyResponse = "Still need to set: ";
+            if (!myDestroyer.GetLocationIsSet())
+            {
+                boardReadyResponse += "Destroyer ";
+            }
+            if(!mySubmarine.GetLocationIsSet())
+            {
+                boardReadyResponse += "Submarine ";
+            }
+            if (!myBattleship.GetLocationIsSet())
+            {
+                boardReadyResponse += "Battleship ";
+            }
+            if (!myAircraftCarrier.GetLocationIsSet())
+            {
+                boardReadyResponse += "Aircraft Carrier ";
+            }
+            if(myDestroyer.GetLocationIsSet() && mySubmarine.GetLocationIsSet() && myBattleship.GetLocationIsSet() && myAircraftCarrier.GetLocationIsSet())
+            {
+                boardReadyResponse = "All are WET and READY!";
+                gameBoardReady = true;
+            }
+            return boardReadyResponse;
+        }
+        public bool IsGameBoardReady()
+        {
+            return gameBoardReady;
         }
 
     }

@@ -17,6 +17,7 @@ namespace Battleship
         public void PlaceShip(Destroyer destroyer, Battleship battleship, AircraftCarrier aircraftCarrier)
         {
             locationSet = false;
+            location = ClearLocation(location);
             Console.WriteLine($"Where would you like to place your {name}?");
             Console.WriteLine($"This ship requires {size} spots.  Pleae give the first spots x coordinate:");
             string x1 = Console.ReadLine();
@@ -29,9 +30,13 @@ namespace Battleship
             if (!GoodCoordinates(x1, y1, x2, y2, destroyer, battleship, aircraftCarrier))
             {
                 Console.WriteLine($"I'm sorry, it doesn't seem like those coordinates work for the {name}.  Let's try again.");
+                location = ClearLocation(location);
                 PlaceShip(destroyer, battleship, aircraftCarrier);
             }
-            SetCoordinates();
+            if (!locationSet)
+            {
+                 SetCoordinates();
+            }
         }
 
         public bool NoOtherShipConflict(Destroyer destroyer, Battleship battleship, AircraftCarrier aircraftCarrier)
